@@ -20,6 +20,7 @@ public class CourseEndpoints : IEndpoint
             .WithSummary("Get all courses");
 
         group.MapPost("/", AddCourse)
+            .WithSummary("Add a new Course")
             .Produces<Course>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .WithValidation<CourseDTO>();
@@ -32,8 +33,9 @@ public class CourseEndpoints : IEndpoint
             Name = courseDTO.Name,
             Code = courseDTO.Code
         };
-        db.Courses.Add(course);
+        await db.Courses.AddAsync(course);
         await db.SaveChangesAsync();
         return Results.Created($"/api/courses/{course.Id}", course);
     }
+
 }
