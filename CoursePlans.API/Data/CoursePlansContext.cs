@@ -1,3 +1,10 @@
+using CoursePlans.API.Companies.Entities;
+using CoursePlans.API.Contacts.Entities;
+using CoursePlans.API.Courses.Entities;
+using CoursePlans.API.Plans.Entities;
+using CoursePlans.API.Registrations.Entities;
+using CoursePlans.API.Trainees.Entities;
+using CoursePlans.API.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoursePlans.API.Data;
