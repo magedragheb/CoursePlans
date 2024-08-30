@@ -14,11 +14,12 @@ public class UserEndpoints : IEndpoint
             .WithOpenApi();
 
         group.MapGet("/", async (CoursePlansContext db) =>
-            await db.Courses.AsNoTracking().ToListAsync())
+            await db.Users.AsNoTracking().ToListAsync())
             .WithName("GetAllUsers")
             .WithSummary("Get all users");
 
         group.MapPost("/", AddUser)
+            .WithSummary("Add a new User")
             .Produces<User>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest);
     }
@@ -30,7 +31,7 @@ public class UserEndpoints : IEndpoint
             Name = userDTO.Name,
             Email = userDTO.Email
         };
-        db.Users.Add(user);
+        await db.Users.AddAsync(user);
         await db.SaveChangesAsync();
         return Results.Created($"/api/users/{user.Id}", user);
     }
