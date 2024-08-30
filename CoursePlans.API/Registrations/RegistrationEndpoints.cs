@@ -20,6 +20,7 @@ public class RegistrationEndpoints : IEndpoint
             .WithSummary("Get all registrations");
 
         group.MapPost("/", Register)
+            .WithSummary("Add a new registration")
             .Produces<Registration>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .WithValidation<RegistrationDTO>();
@@ -36,7 +37,7 @@ public class RegistrationEndpoints : IEndpoint
             Price = registrationDTO.Price,
             Date = registrationDTO.Date
         };
-        db.Registrations.Add(registration);
+        await db.Registrations.AddAsync(registration);
         await db.SaveChangesAsync();
         return Results.Created($"/api/registrations/{registration.Id}", registration);
     }
