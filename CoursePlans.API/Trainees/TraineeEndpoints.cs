@@ -19,6 +19,7 @@ public class TraineeEndpoints : IEndpoint
             .WithSummary("Get all trainees");
 
         group.MapPost("/", AddTrainee)
+            .WithSummary("Add a new trainee")
             .Produces<Trainee>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest);
     }
@@ -31,7 +32,7 @@ public class TraineeEndpoints : IEndpoint
             CompanyId = traineeDTO.CompanyId,
             ContactId = traineeDTO.ContactId
         };
-        db.Trainees.Add(trainee);
+        await db.Trainees.AddAsync(trainee);
         await db.SaveChangesAsync();
         return Results.Created($"/api/trainees/{trainee.Id}", trainee);
     }
