@@ -13,5 +13,6 @@ public class ContactDTOValidator : AbstractValidator<ContactDTO>
         RuleFor(x => x.Email)
             .NotEmpty()
             .EmailAddress();
+        RuleFor(x => x.CompanyId).NotEmpty();
     }
 }
