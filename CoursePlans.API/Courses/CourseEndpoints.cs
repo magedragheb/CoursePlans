@@ -22,7 +22,8 @@ public class CourseEndpoints : IEndpoint
         {
             var course = new Course
             {
-                Name = courseDTO.Name
+                Name = courseDTO.Name,
+                Code = courseDTO.Code
             };
             db.Courses.Add(course);
             await db.SaveChangesAsync();

@@ -23,6 +23,7 @@ public class UserEndpoints : IEndpoint
             var user = new User
             {
                 Name = userDTO.Name,
+                Email = userDTO.Email
             };
             db.Users.Add(user);
             await db.SaveChangesAsync();

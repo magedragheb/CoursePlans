@@ -22,8 +22,7 @@ public class CompanyEndpoints : IEndpoint
         {
             var company = new Company
             {
-                Name = companyDTO.Name,
-
+                Name = companyDTO.Name
             };
             db.Companies.Add(company);
             await db.SaveChangesAsync();

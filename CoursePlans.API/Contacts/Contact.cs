@@ -7,7 +7,7 @@ public class Contact
     public int Id { get; set; }
     public required string Name { get; set; }
     public required string Email { get; set; }
-    public required int CompanyId { get; set; }
+    public int CompanyId { get; set; }
     public Company? Company { get; set; }
 }
 

@@ -31,9 +31,15 @@ public class PlanEndpoints : IEndpoint
                 StartDate = planDTO.StartDate,
                 EndDate = planDTO.EndDate
             };
-            db.Plans.Add(plan);
+            await db.Plans.AddAsync(plan);
+            var course = await db.Courses.Where(c => c.Id == planDTO.CourseId).FirstOrDefaultAsync();
+            if (course != null)
+            {
+                course.PlanCount += 1;
+                db.Courses.Update(course);
+            }
             await db.SaveChangesAsync();
-            return Results.Created($"/api/plans/{plan.Id}", plan);
+            return TypedResults.Created($"/api/plans/{plan.Id}", plan);
         });
     }
 }
