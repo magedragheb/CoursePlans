@@ -23,6 +23,7 @@ public class PlanEndpoints : IEndpoint
             .WithSummary("Get all plans");
 
         group.MapPost("/", AddPlan)
+            .WithSummary("Add a new Plan")
             .Produces<Plan>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .WithValidation<PlanDTO>();
@@ -30,6 +31,8 @@ public class PlanEndpoints : IEndpoint
 
     public async Task<IResult> AddPlan(PlanDTO planDTO, CoursePlansContext db)
     {
+        var course = await db.Courses.FindAsync(planDTO.CourseId);
+        if (course == null) return TypedResults.BadRequest("Invalid Course");
         var plan = new Plan
         {
             Title = planDTO.Title,
@@ -39,12 +42,8 @@ public class PlanEndpoints : IEndpoint
             EndDate = planDTO.EndDate
         };
         await db.Plans.AddAsync(plan);
-        var course = await db.Courses.Where(c => c.Id == planDTO.CourseId).FirstOrDefaultAsync();
-        if (course != null)
-        {
-            course.PlanCount += 1;
-            db.Courses.Update(course);
-        }
+        course.PlanCount += 1;
+        db.Courses.Update(course);
         await db.SaveChangesAsync();
         return TypedResults.Created($"/api/plans/{plan.Id}", plan);
     }
