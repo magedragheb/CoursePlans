@@ -18,16 +18,20 @@ public class UserEndpoints : IEndpoint
             .WithName("GetAllUsers")
             .WithSummary("Get all users");
 
-        group.MapPost("/", async (UserDTO userDTO, CoursePlansContext db) =>
+        group.MapPost("/", AddUser)
+            .Produces<User>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest);
+    }
+
+    public async Task<IResult> AddUser(UserDTO userDTO, CoursePlansContext db)
+    {
+        var user = new User
         {
-            var user = new User
-            {
-                Name = userDTO.Name,
-                Email = userDTO.Email
-            };
-            db.Users.Add(user);
-            await db.SaveChangesAsync();
-            return Results.Created($"/api/users/{user.Id}", user);
-        });
+            Name = userDTO.Name,
+            Email = userDTO.Email
+        };
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
+        return Results.Created($"/api/users/{user.Id}", user);
     }
 }

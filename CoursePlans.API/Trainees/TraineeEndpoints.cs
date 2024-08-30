@@ -18,17 +18,21 @@ public class TraineeEndpoints : IEndpoint
             .WithName("GetAllTrainees")
             .WithSummary("Get all trainees");
 
-        group.MapPost("/", async (TraineeDTO traineeDTO, CoursePlansContext db) =>
+        group.MapPost("/", AddTrainee)
+            .Produces<Trainee>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest);
+    }
+
+    public async Task<IResult> AddTrainee(TraineeDTO traineeDTO, CoursePlansContext db)
+    {
+        var trainee = new Trainee
         {
-            var trainee = new Trainee
-            {
-                RegistrationId = traineeDTO.RegistrationId,
-                CompanyId = traineeDTO.CompanyId,
-                ContactId = traineeDTO.ContactId
-            };
-            db.Trainees.Add(trainee);
-            await db.SaveChangesAsync();
-            return Results.Created($"/api/trainees/{trainee.Id}", trainee);
-        });
+            RegistrationId = traineeDTO.RegistrationId,
+            CompanyId = traineeDTO.CompanyId,
+            ContactId = traineeDTO.ContactId
+        };
+        db.Trainees.Add(trainee);
+        await db.SaveChangesAsync();
+        return Results.Created($"/api/trainees/{trainee.Id}", trainee);
     }
 }

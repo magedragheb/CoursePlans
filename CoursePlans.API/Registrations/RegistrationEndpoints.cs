@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using CoursePlans.API.Data;
 using CoursePlans.API.Endpoints;
 using CoursePlans.API.Registrations.Entities;
+using CoursePlans.API.Endpoints.Filters;
 
 namespace CoursePlans.API.Registrations.Endpoints;
 
@@ -18,20 +19,25 @@ public class RegistrationEndpoints : IEndpoint
             .WithName("GetAllRegistrations")
             .WithSummary("Get all registrations");
 
-        group.MapPost("/", async (RegistrationDTO registrationDTO, CoursePlansContext db) =>
+        group.MapPost("/", Register)
+            .Produces<Registration>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .WithValidation<RegistrationDTO>();
+    }
+
+    public async Task<IResult> Register(RegistrationDTO registrationDTO, CoursePlansContext db)
+    {
+        var registration = new Registration
         {
-            var registration = new Registration
-            {
-                PlanId = registrationDTO.PlanId,
-                CourseId = registrationDTO.CourseId,
-                UserId = registrationDTO.UserId,
-                CompanyId = registrationDTO.CompanyId,
-                Price = registrationDTO.Price,
-                Date = registrationDTO.Date
-            };
-            db.Registrations.Add(registration);
-            await db.SaveChangesAsync();
-            return Results.Created($"/api/registrations/{registration.Id}", registration);
-        });
+            PlanId = registrationDTO.PlanId,
+            CourseId = registrationDTO.CourseId,
+            UserId = registrationDTO.UserId,
+            CompanyId = registrationDTO.CompanyId,
+            Price = registrationDTO.Price,
+            Date = registrationDTO.Date
+        };
+        db.Registrations.Add(registration);
+        await db.SaveChangesAsync();
+        return Results.Created($"/api/registrations/{registration.Id}", registration);
     }
 }

@@ -3,11 +3,10 @@ using FluentValidation;
 
 namespace CoursePlans.API.Companies.Endpoints.Validators;
 
-public class CompanyValidator : AbstractValidator<Company>
+public class CompanyDTOValidator : AbstractValidator<CompanyDTO>
 {
-    public CompanyValidator()
+    public CompanyDTOValidator()
     {
-        RuleFor(x => x.Name).NotEmpty();
-        RuleFor(x => x.Name).MaximumLength(50);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(50);
     }
 }

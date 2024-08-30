@@ -23,7 +23,7 @@ public class CompanyEndpoints : IEndpoint
             .WithSummary("Add a new Company")
             .Produces<Company>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
-            .WithValidation<Company>();
+            .WithValidation<CompanyDTO>();
     }
 
     public async Task<IResult> GetCompanies(CoursePlansContext db) =>

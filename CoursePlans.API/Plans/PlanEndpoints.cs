@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using CoursePlans.API.Data;
 using CoursePlans.API.Endpoints;
 using CoursePlans.API.Plans.Entities;
+using CoursePlans.API.Endpoints.Filters;
 
 namespace CoursePlans.API.Plans.Endpoints;
 
@@ -21,25 +22,30 @@ public class PlanEndpoints : IEndpoint
             .WithName("GetAllPlans")
             .WithSummary("Get all plans");
 
-        group.MapPost("/", async (PlanDTO planDTO, CoursePlansContext db) =>
+        group.MapPost("/", AddPlan)
+            .Produces<Plan>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .WithValidation<PlanDTO>();
+    }
+
+    public async Task<IResult> AddPlan(PlanDTO planDTO, CoursePlansContext db)
+    {
+        var plan = new Plan
         {
-            var plan = new Plan
-            {
-                Title = planDTO.Title,
-                UserId = planDTO.UserId,
-                CourseId = planDTO.CourseId,
-                StartDate = planDTO.StartDate,
-                EndDate = planDTO.EndDate
-            };
-            await db.Plans.AddAsync(plan);
-            var course = await db.Courses.Where(c => c.Id == planDTO.CourseId).FirstOrDefaultAsync();
-            if (course != null)
-            {
-                course.PlanCount += 1;
-                db.Courses.Update(course);
-            }
-            await db.SaveChangesAsync();
-            return TypedResults.Created($"/api/plans/{plan.Id}", plan);
-        });
+            Title = planDTO.Title,
+            UserId = planDTO.UserId,
+            CourseId = planDTO.CourseId,
+            StartDate = planDTO.StartDate,
+            EndDate = planDTO.EndDate
+        };
+        await db.Plans.AddAsync(plan);
+        var course = await db.Courses.Where(c => c.Id == planDTO.CourseId).FirstOrDefaultAsync();
+        if (course != null)
+        {
+            course.PlanCount += 1;
+            db.Courses.Update(course);
+        }
+        await db.SaveChangesAsync();
+        return TypedResults.Created($"/api/plans/{plan.Id}", plan);
     }
 }
