@@ -35,7 +35,7 @@ public class CompanyEndpoints : IEndpoint
         {
             Name = companyDTO.Name
         };
-        db.Companies.Add(company);
+        await db.Companies.AddAsync(company);
         await db.SaveChangesAsync();
         return TypedResults.Created($"/api/companies/{company.Id}", company);
     }

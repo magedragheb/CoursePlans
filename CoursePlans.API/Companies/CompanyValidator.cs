@@ -9,4 +9,5 @@ public class CompanyDTOValidator : AbstractValidator<CompanyDTO>
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(50);
     }
+
 }
